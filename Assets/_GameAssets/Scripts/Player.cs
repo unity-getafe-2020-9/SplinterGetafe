@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
+    public GameObject bolaDeteccion;
+
     public float walkSpeed;
     public float runSpeed;
     private float speed;
@@ -19,11 +21,15 @@ public class Player : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         speed = walkSpeed;
     }
-
     void Update()
     {
         x = Input.GetAxis("Horizontal");
         z = Input.GetAxis("Vertical");
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Knocked Out"))
+        {
+            animator.SetFloat("z", 0);
+            return;
+        }
         if (z > 0)
         {
             Avanzar();
@@ -59,5 +65,26 @@ public class Player : MonoBehaviour
     {
         animator.SetBool("Running", false);
         speed = walkSpeed;
+    }
+    void Caer()
+    {
+        animator.SetTrigger("Zasca");
+    }
+    public void Detectado()
+    {
+        bolaDeteccion.SetActive(true);
+    }
+    public void NoDetectado()
+    {
+        bolaDeteccion.SetActive(false);
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Running"))
+        {
+            Caer();
+            //PararCorrer();
+        }
+        
     }
 }

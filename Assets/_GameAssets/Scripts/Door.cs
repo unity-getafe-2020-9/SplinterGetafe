@@ -18,4 +18,13 @@ public class Door : MonoBehaviour
             animator.SetTrigger("Abrir");
         }
     }
+
+    public void PlaySound()
+    {
+        GetComponent<AudioSource>().Play();
+    }
+    public void GenerarChispas()
+    {
+        print("Generando chispas");
+    }
 }
