@@ -1,16 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class VisionAgente : MonoBehaviour
 {
+    private bool playerDetectado = false;
+    public static int numeroDetecciones;
+
     private GameObject player;
     private Animator animator;
+    private NavMeshAgent nma;
 
     public float distanciaDeteccion;
     public float anguloVision;
     public float distanciaDeteccionAndando;
     public float distanciaDeteccionCorriendo;
+    public float distanciaMuerte;
     public LayerMask layerMask;
     
 
@@ -18,6 +24,13 @@ public class VisionAgente : MonoBehaviour
     {
         player = GameObject.Find("Remigio");
         animator = player.GetComponentInChildren<Animator>();
+        nma = GetComponent<NavMeshAgent>();
+    }
+
+    bool IsPlayerAtDeathRange()
+    {
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+        return distance < distanciaMuerte;
     }
 
     bool IsPlayerAtSightRange()
@@ -52,7 +65,6 @@ public class VisionAgente : MonoBehaviour
         }
         return isVisible;
     }
-
     bool IsPlayerDoingNoise()
     {
         bool hayRuido = false;
@@ -80,11 +92,35 @@ public class VisionAgente : MonoBehaviour
 
     void Update()
     {
+        if (playerDetectado)
+        {
+            nma.SetDestination(player.transform.position);
+            if (IsPlayerAtDeathRange())
+            {
+                player.GetComponent<Player>().Morir();
+            }
+        }
+
         if ((IsPlayerAtSightRange() && IsPlayerVisible() && IsPlayerAtSightAngle()) || IsPlayerDoingNoise())
         {
-            player.GetComponent<Player>().Detectado();
+            if (!playerDetectado)
+            {
+                numeroDetecciones++;
+            }
+            playerDetectado = true;
         }
         else
+        {
+            if (playerDetectado)
+            {
+                numeroDetecciones--;
+            }
+            playerDetectado = false;
+        }
+        if (numeroDetecciones > 0)
+        {
+            player.GetComponent<Player>().Detectado();
+        } else
         {
             player.GetComponent<Player>().NoDetectado();
         }

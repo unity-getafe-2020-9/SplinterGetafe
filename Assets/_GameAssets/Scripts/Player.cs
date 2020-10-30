@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 public class Player : MonoBehaviour
 {
     public GameObject bolaDeteccion;
+    public GameObject bolaMuerte;
 
     public float walkSpeed;
     public float runSpeed;
@@ -77,6 +78,11 @@ public class Player : MonoBehaviour
     public void NoDetectado()
     {
         bolaDeteccion.SetActive(false);
+    }
+
+    public void Morir()
+    {
+        bolaMuerte.SetActive(true);
     }
     private void OnCollisionEnter(Collision collision)
     {

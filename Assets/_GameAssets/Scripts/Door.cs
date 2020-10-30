@@ -10,10 +10,9 @@ public class Door : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        if (other.gameObject.CompareTag("Player") && GameManager.HasKey())
         {
             animator.SetTrigger("Abrir");
         }
